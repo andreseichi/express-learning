@@ -1,6 +1,5 @@
+require('dotenv').config();
 const express = require('express');
-
-const importData = require('./data.json');
 
 const api = require('./api');
 
@@ -11,12 +10,25 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.get('/api', (req, res) => {
-  res.send(importData);
+app.get('/trends', async (req, res) => {
+  try {
+    const { data } = await api.get('trends/place.json?id=1');
+    console.log(data);
+    return res.send(data);
+  } catch (error) {
+    res.send({ error: error.message });
+  }
 });
 
-app.get('/pokemon', (req, res) => {
-  res.send(api);
+app.get('/trends/:id', async (req, res) => {
+  console.log(req.params.id);
+  const { id } = req.params;
+  try {
+    const { data } = await api.get(`trends/place.json?id=${id}`);
+    return res.send(data);
+  } catch (error) {
+    res.send({ error: error.message });
+  }
 });
 
 app.listen(port, () => {
